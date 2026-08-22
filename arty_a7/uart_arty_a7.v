@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2020-2025 RVX Project Contributors
 
-module gpio_arty_a7 #( 
+module uart_arty_a7 #( 
 
   parameter GPIO_WIDTH = 3
 
@@ -42,7 +42,7 @@ module gpio_arty_a7 #(
     .CLOCK_FREQUENCY          (50000000               ),
     .UART_BAUD_RATE           (9600                   ),
     .MEMORY_SIZE              (8192                   ),
-    .MEMORY_INIT_FILE         ("gpio_demo.hex"        ),
+    .MEMORY_INIT_FILE         ("uart_demo.hex"        ),
     .BOOT_ADDRESS             (32'h00000000           ),
     .GPIO_WIDTH               (3                      )
 
