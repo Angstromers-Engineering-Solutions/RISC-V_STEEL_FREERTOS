@@ -3,17 +3,26 @@
 
 #include "libsteel.h"
 
-#define DEFAULT_GPIO (GpioController *)0x80020000
+#define DEFAULT_UART (UartController *)0x80000000
+
+// UART interrupt signal is connected to Fast IRQ #0
+__NAKED void fast0_irq_handler(void)
+{
+  char rx = uart_read(DEFAULT_UART);
+  if (rx == '\r') // Enter key
+    uart_write_string(DEFAULT_UART, "\n\nType something else and press enter: ");
+  else if (rx < 127)
+    uart_write(DEFAULT_UART, rx);
+  __ASM_VOLATILE("mret");
+}
 
 void main(void)
 {
-  gpio_set_output(DEFAULT_GPIO, 0);
-  gpio_set_output(DEFAULT_GPIO, 1);
-  gpio_set_input(DEFAULT_GPIO, 2);
-  gpio_write(DEFAULT_GPIO, 0, HIGH);
+  uart_write_string(DEFAULT_UART, "RISC-V_STEEL UART demo");
+  uart_write_string(DEFAULT_UART, "\n\nType something and press Enter:\n");
+  csr_enable_vectored_mode_irq();
+  CSR_SET(CSR_MIE, MIP_MIE_MASK_F0I);
+  csr_global_enable_irq();
   while (1)
-  {
-    uint32_t button_state = gpio_read(DEFAULT_GPIO, 2);
-    gpio_write(DEFAULT_GPIO, 1, button_state);
-  }
+    ;
 }
